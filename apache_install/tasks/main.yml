@@ -1,0 +1,22 @@
+---
+# Load Debian Import tasks
+- name: (Debian) Load tasks
+  import_tasks: debian.yml
+  when: ansible_facts['os_family'] == "Debian"
+
+# Load Redhat Import tasks
+- name: (Redhat) Load tasks
+  import_tasks: redhat.yml
+  when: ansible_facts['os_family'] in ['RedHat', 'Rocky']
+
+# Common tasks
+
+- name: Open http and https ports
+  ansible.posix.firewalld:
+    port: "{{ item }}/tcp"
+    state: enabled
+    immediate: true
+    permanent: true
+  loop:
+    - "{{ http_port }}"
+    - "{{ https_port }}"

@@ -1,0 +1,6 @@
+---
+- name: Restart-Enable Apache
+  ansible.builtin.service:
+    name: "{{ apache_service }}"
+    state: restarted
+    enabled: true

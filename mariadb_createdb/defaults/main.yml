@@ -1,0 +1,6 @@
+---
+database_name: sqldb
+database_user: sqladmin
+database_trusted_clients: localhost
+database_host: localhost
+# database_password:  !vault

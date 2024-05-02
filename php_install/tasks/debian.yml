@@ -1,0 +1,21 @@
+---
+- name: (Debian) Include vairables
+  ansible.builtin.include_vars:
+    file: debian.yml
+
+- name: (Debian) Install PHP
+  ansible.builtin.apt:
+    name:
+      - php
+      - php-json
+      - php-xml
+      - php-dom
+      - php-gd
+      - php-mysql
+      - php-curl
+      - php-intl
+      - php-zip
+      - php-mbstring
+    state: present
+    update_cache: true
+  notify: "Restart-Enable Apache"

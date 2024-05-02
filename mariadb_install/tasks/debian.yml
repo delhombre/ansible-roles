@@ -1,0 +1,12 @@
+---
+- name: (Debian) Include vairables
+  ansible.builtin.include_vars:
+    file: debian.yml
+
+- name: (Debian) Install MariaDB
+  ansible.builtin.apt:
+    name:
+      - mariadb-server
+      - python3-mysqldb
+    state: present
+    update_cache: true

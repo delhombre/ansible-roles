@@ -1,0 +1,59 @@
+---
+- name: (Debian) Include vairables
+  ansible.builtin.include_vars:
+    file: debian.yml
+  when: ansible_facts['os_family'] == "Debian"
+
+- name: (Redhat) Include vairables
+  ansible.builtin.include_vars:
+    file: redhat.yml
+  when: ansible_facts['os_family'] in ['RedHat', 'Rocky']
+
+- name: Configure PHP for Wordpress
+  ansible.builtin.lineinfile:
+    path: "{{ php_ini_file }}"
+    regex: "{{ item.regex }}"
+    line: "{{ item.line }}"
+  notify: "Restart-Enable Apache"
+  loop:
+    - { regex: "^memory_limit", line: "memory_limit = 256M" }
+    - { regex: "^max_input_time", line: "max_input_time = 120" }
+    - { regex: "^post_max_size", line: "post_max_size = 64M" }
+    - { regex: "^max_file_uploads", line: "max_file_uploads = 50" }
+    - { regex: "^output_buffering", line: "output_buffering = off" }
+
+- name: Download Wordpress to /var/www
+  ansible.builtin.get_url:
+    url: "{{ wordpress_url }}"
+    dest: "/var/www"
+    mode: "0644"
+    checksum: "{{ wordpress_hash }}"
+
+- name: Remove index.html file
+  ansible.builtin.file:
+    path: "/var/www/html/index.html"
+    state: absent
+
+- name: Extract the wordpress.tar.gz file
+  ansible.builtin.unarchive:
+    src: "{{ wordpress_path }}"
+    remote_src: true
+    dest: "/var/www/html"
+    extra_opts:
+      - "--strip-component=1" # Removes first level directory
+      - "--show-stored-names" # fix idempotency problems
+
+- name: Change the DocumentRoot owner
+  ansible.builtin.file:
+    path: "/var/www/html"
+    state: directory
+    owner: "{{ apache_user }}"
+    recurse: true
+
+- name: Template 'wp-config.php'
+  ansible.builtin.template:
+    src: "wp-config.php.j2"
+    dest: /var/www/html/wp-config.php
+    owner: "{{ apache_user }}"
+    mode: "0444"
+  notify: "Restart-Enable Apache"

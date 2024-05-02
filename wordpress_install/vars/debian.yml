@@ -1,0 +1,4 @@
+---
+apache_service: apache2.service
+apache_user: www-data
+php_ini_file: "/etc/php/8.2/apache2/php.ini"

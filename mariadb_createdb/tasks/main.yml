@@ -1,0 +1,29 @@
+---
+# Load Debian Import tasks
+- name: (Debian) Include variables file
+  ansible.builtin.include_vars:
+    file: debian.yml
+  when: ansible_facts['os_family'] == "Debian"
+
+- name: (Redhat) Include variables file
+  ansible.builtin.include_vars:
+    file: redhat.yml
+  when: ansible_facts['os_family'] in ['RedHat', 'Rocky']
+
+- name: Create a database
+  community.mysql.mysql_db:
+    name: "{{ database_name }}"
+    state: present
+    check_implicit_admin: true
+    login_unix_socket: "{{ mariadb_socket }}"
+
+- name: Create a user for the database
+  community.mysql.mysql_user:
+    priv: "{{ database_name }}.*:ALL"
+    name: "{{ database_user }}"
+    host: "{{ database_trusted_clients }}"
+    password: "{{ database_password }}"
+    state: present
+    check_implicit_admin: true
+    login_unix_socket: "{{ mariadb_socket }}"
+    column_case_sensitive: true

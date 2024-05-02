@@ -1,0 +1,3 @@
+---
+mariadb_service: mariadb.service
+mariadb_config: "/etc/my.cnf.d/mariadb-server.cnf"

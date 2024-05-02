@@ -1,0 +1,6 @@
+---
+- name: Restart-Enable MariaDB
+  ansible.builtin.service:
+    name: "{{ mariadb_service }}"
+    state: restarted
+    enabled: true

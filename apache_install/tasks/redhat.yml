@@ -1,0 +1,18 @@
+---
+- name: (Redhat) Include vairables
+  ansible.builtin.include_vars:
+    file: redhat.yml
+
+- name: (Redhat) Install Apache
+  ansible.builtin.dnf:
+    name:
+      - httpd
+      - mod_ssl
+    state: present
+    update_cache: true
+
+- name: (Redhat) Start-Enable Apache
+  ansible.builtin.service:
+    name: "{{ apache_service }}"
+    state: started
+    enabled: true

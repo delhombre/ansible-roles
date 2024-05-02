@@ -1,0 +1,4 @@
+---
+apache_service: httpd.service
+apache_user: apache
+php_ini_file: "/etc/php.ini"

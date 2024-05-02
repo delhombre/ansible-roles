@@ -1,0 +1,26 @@
+---
+- name: (Debian) Include vairables
+  ansible.builtin.include_vars:
+    file: debian.yml
+
+- name: (Debian) Install Apache
+  ansible.builtin.apt:
+    name:
+      - apache2
+    state: present
+    update_cache: true
+
+- name: (Debian) Activate SSL module
+  community.general.apache2_module:
+    name: ssl
+    state: present
+  notify: Restart-Enable Apache
+
+- name: (Debian) Enable 'default-ssl' virtualhost
+  ansible.builtin.file:
+    src: ../sites-available/default-ssl.conf
+    dest: /etc/apache2/sites-enabled/default-ssl.conf
+    owner: root
+    group: root
+    state: link
+  notify: Restart-Enable Apache

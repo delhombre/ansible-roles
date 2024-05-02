@@ -1,0 +1,25 @@
+---
+- name: (Redhat) Include variables
+  ansible.builtin.include_vars:
+    file: redhat.yml
+
+- name: (Redhat) Installed required packages
+  ansible.builtin.dnf:
+    name:
+      - bash-completion
+      - rsync
+      - python3-libselinux # Needed for selinux
+      - python3-policycoreutils #
+      - python3-firewall # Needed for firewalld
+    state: present
+    update_cache: true
+
+- name: (Redhat) Disable SELinux
+  ansible.posix.selinux:
+    state: disabled
+
+- name: (Redhat) Upgrade the system
+  ansible.builtin.dnf:
+    name: "*"
+    state: latest # noqa: package-latest
+    update_cache: true

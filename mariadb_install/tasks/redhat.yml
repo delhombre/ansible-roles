@@ -1,0 +1,18 @@
+---
+- name: (Redhat) Include vairables
+  ansible.builtin.include_vars:
+    file: redhat.yml
+
+- name: (Redhat) Install MariaDB
+  ansible.builtin.dnf:
+    name:
+      - mariadb-server
+      - python3-PyMySQL
+    state: present
+    update_cache: true
+
+- name: (Redhat) Start-Enable MariaDB
+  ansible.builtin.service:
+    name: "{{ mariadb_service }}"
+    state: started
+    enabled: true

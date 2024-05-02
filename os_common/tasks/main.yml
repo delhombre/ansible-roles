@@ -1,0 +1,39 @@
+---
+# Load Debian Import tasks
+- name: (Debian) Load tasks
+  import_tasks: debian.yml
+  when: ansible_facts['os_family'] == "Debian"
+
+# Load Redhat Import tasks
+- name: (Redhat) Load tasks
+  import_tasks: redhat.yml
+  when: ansible_facts['os_family'] in ['RedHat', 'Rocky']
+
+# SSH Management
+- name: Add group for ssh connections
+  ansible.builtin.group:
+    name: "{{ ssh_group }}"
+    state: present
+  notify: Restart SSH
+
+- name: Add server user in new group
+  ansible.builtin.user:
+    name: "{{ ansible_user }}"
+    groups: "{{ ssh_group }}"
+    append: true
+    state: present
+  notify: Restart SSH
+
+- name: Modify 'sshd_config'
+  ansible.builtin.lineinfile:
+    path: "/etc/ssh/sshd_config"
+    state: present
+    insertafter: "^#PermitRootLogin"
+    line: "AllowGroups {{ ssh_group }}"
+  notify: Restart SSH
+
+# Manage hostname
+- name: Change servers hostname
+  ansible.builtin.hostname:
+    name: "{{ inventory_hostname }}"
+    use: systemd

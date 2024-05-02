@@ -1,0 +1,19 @@
+---
+- name: (Redhat) Include vairables
+  ansible.builtin.include_vars:
+    file: redhat.yml
+
+- name: (Redhat) Install PHP
+  ansible.builtin.dnf:
+    name:
+      - php
+      - php-gd
+      - php-intl
+      - php-mbstring
+      - php-mysqlnd
+      - php-pecl-zip
+      - php-xml
+      - tar
+    state: present
+    update_cache: true
+  notify: "Restart-Enable Apache"

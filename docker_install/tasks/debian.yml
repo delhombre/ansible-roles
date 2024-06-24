@@ -1,0 +1,41 @@
+---
+- name: (Debian) Install necessary packages
+  ansible.builtin.apt:
+    name:
+      - ca-certificates
+      - curl
+    state: present
+    update_cache: true
+
+- name: (Debian) Create Docker keyrings directory
+  ansible.builtin.command:
+    cmd: install -m 0755 -d /etc/apt/keyrings
+
+- name: (Debian) Download Docker GPG key
+  ansible.builtin.shell:
+    cmd: >
+      curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
+
+- name: (Debian) Add Docker GPG key
+  ansible.builtin.command:
+    cmd: chmod a+r /etc/apt/keyrings/docker.asc
+
+- name: (Debian) Add Docker repository
+  ansible.builtin.shell:
+    cmd: >
+      echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+- name: (Debian) Install Docker Engine
+  ansible.builtin.apt:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+      # - python3-docker
+      # - python3-jsondiff
+      # - python3-pretty-yaml
+      # - python3-pyyaml-env-tag
+    state: latest
+    update_cache: true

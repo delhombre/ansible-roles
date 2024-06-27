@@ -1,0 +1,4 @@
+---
+nfs_dir: /srv/nfs/html
+nfs_options: (rw,sync,no_root_squash,no_subtree_check)
+nfs_networks: "192.168.122.0/24{{ nfs_options }}"

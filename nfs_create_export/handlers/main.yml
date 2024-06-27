@@ -1,0 +1,9 @@
+---
+- name: Restart-Enable NFS
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: restarted
+    enabled: true
+  loop:
+    - "{{ rpcbind_service }}"
+    - "{{ nfs_service }}"

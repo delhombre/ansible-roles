@@ -1,0 +1,8 @@
+---
+- name: Add "worker" to swarm
+  community.docker.docker_swarm:
+    state: join
+    advertise_addr: "{{ lookup('ansible.builtin.file', 'manager1/swarm-address') }}"
+    join_token: "{{ lookup('ansible.builtin.file', 'manager1/worker-token') }}"
+    remote_addrs:
+      - "{{ lookup('ansible.builtin.file', 'manager1/swarm-address') }}"

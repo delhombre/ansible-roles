@@ -1,0 +1,7 @@
+---
+- name: Open Firewalld port
+  ansible.posix.firewalld:
+    port: "{{ port_to_open }}"
+    state: enabled
+    immediate: true
+    permanent: true

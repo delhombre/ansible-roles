@@ -1,0 +1,15 @@
+---
+- name: Copy "docker-stack.yml" to "manager1"
+  ansible.builtin.copy:
+    src: "docker-stack.yml"
+    dest: "{{ stack_path }}"
+    owner: "{{ main_user }}"
+    group: "{{ main_group }}"
+    mode: "0644"
+
+- name: Deploy stack from "docker-stack.yml" on "manager1"
+  community.docker.docker_stack:
+    state: "present"
+    name: "{{ stack_name }}"
+    compose:
+      - "{{ stack_path }}"

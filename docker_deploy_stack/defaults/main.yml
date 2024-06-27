@@ -1,0 +1,5 @@
+---
+main_user: "delhombre"
+main_group: "delhombre"
+stack_name: "mystack"
+stack_path: "/opt/docker-stack.yml"

@@ -1,0 +1,10 @@
+---
+main_user: delhombre
+server_name: devops.company.lan
+http_port: "80"
+https_port: "443"
+http_backend_port: "80"
+backend_servers:
+  - "web1 hostname1"
+  - "web2 hostname2"
+  - "web3 hostname3"

@@ -6,6 +6,5 @@
     enabled: true
 
 - name: Source file
-  ansible.builtin.shell:
+  ansible.builtin.command:
     cmd: "source {{ file_to_source }}"
-    executuable: /bin/bash

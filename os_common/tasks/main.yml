@@ -1,12 +1,12 @@
 ---
 # Load Debian Import tasks
 - name: (Debian) Load tasks
-  import_tasks: debian.yml
+  ansible.builtin.import_tasks: debian.yml
   when: ansible_facts['os_family'] == "Debian"
 
 # Load Redhat Import tasks
 - name: (Redhat) Load tasks
-  import_tasks: redhat.yml
+  ansible.builtin.import_tasks: redhat.yml
   when: ansible_facts['os_family'] in ['RedHat', 'Rocky']
 
 # SSH Management
@@ -37,3 +37,12 @@
   ansible.builtin.hostname:
     name: "{{ inventory_hostname }}"
     use: systemd
+
+- name: "Add name resolution in /etc/hosts"
+  ansible.builtin.lineinfile:
+    dest: /etc/hosts
+    regexp: ".*{{ item }}$"
+    line: "{{ hostvars[item].ansible_host }}    {{ item }}"
+    state: present
+  when: hostvars[item].ansible_host is defined
+  with_items: "{{ groups['all'] }}"

@@ -1,0 +1,22 @@
+---
+- name: (Redhat) Include variables file
+  ansible.builtin.include_vars:
+    file: vars/redhat.yml
+
+- name: (Redhat) Install NFS client
+  ansible.builtin.dnf:
+    name:
+      - nfs-utils
+      - rpcbind
+    state: present
+  notify: Restart-Enable NFS
+
+- name: (Redhat) Enable and start NFS services
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+  loop:
+    - "{{ rpcbind_service }}"
+    - "{{ nfs_service }}"
+  notify: Restart-Enable NFS

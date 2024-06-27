@@ -1,0 +1,12 @@
+---
+- name: (Debian) Include variables file
+  ansible.builtin.include_vars:
+    file: vars/debian.yml
+
+- name: (Debian) Install NFS client
+  ansible.builtin.apt:
+    name:
+      - nfs-kernel-server
+      - portmap
+    state: present
+  notify: Restart-Enable NFS

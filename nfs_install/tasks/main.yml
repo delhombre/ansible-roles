@@ -1,0 +1,44 @@
+---
+- name: Debian family tasks
+  import_tasks: debian.yml
+  when: ansible_facts['os_family'] == "Debian"
+
+- name: Redhat family tasks
+  import_tasks: redhat.yml
+  when: ansible_facts['os_family'] in ['RedHat', 'Rocky']
+
+- name: Configure "nfs.conf" file
+  ansible.builtin.lineinfile:
+    path: /etc/nfs.conf
+    insertafter: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  notify: Restart-Enable NFS
+  loop:
+    - { regexp: '^\[lockd\]', line: "udp-port=57002" }
+    - { regexp: '^\[lockd\]', line: "port=57001" }
+    - { regexp: '^\[mountd\]', line: "port=58001" }
+    - { regexp: '^\[statd\]', line: "port=59001" }
+
+- name: Open Firewalld services for NFS
+  ansible.posix.firewalld:
+    service: "{{ item }}"
+    state: enabled
+    immediate: true
+    permanent: true
+  loop:
+    - nfs
+    - rpc-bind
+
+- name: Open Firewalld ports for NFS
+  ansible.posix.firewalld:
+    port: "{{ item }}"
+    state: enabled
+    immediate: true
+    permanent: true
+  loop:
+    - 57001/tcp
+    - 57002/udp
+    - 58001/tcp
+    - 58001/udp
+    - 59001/tcp
+    - 59001/udp

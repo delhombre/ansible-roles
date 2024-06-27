@@ -19,9 +19,9 @@
       - containerd.io
       - docker-buildx-plugin
       - docker-compose-plugin
-      # - python3-docker
-      # - python3-jsondiff
-      # - python3-pyyaml
+      - python3-docker
+      - python3-jsondiff
+      - python3-pyyaml
     state: latest
     update_cache: true
 

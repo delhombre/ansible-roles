@@ -33,9 +33,9 @@
       - containerd.io
       - docker-buildx-plugin
       - docker-compose-plugin
-      # - python3-docker
-      # - python3-jsondiff
-      # - python3-pretty-yaml
-      # - python3-pyyaml-env-tag
+      - python3-docker
+      - python3-jsondiff
+      - python3-pretty-yaml
+      - python3-pyyaml-env-tag
     state: latest
     update_cache: true

@@ -1,0 +1,39 @@
+---
+- name: "Initialize Swarm"
+  community.docker.docker_swarm:
+    state: present
+
+- name: Drain "manager1"
+  ansible.builtin.command:
+    cmd: "docker node update --availability drain {{ manager1_hostname }}"
+
+- name: Store "worker token" remotely
+  ansible.builtin.shell: >
+    docker swarm join-token worker | grep 'docker swarm join' | tr -s ' ' | cut -d' ' -f6 > worker-token
+
+- name: Store "manager token" remotely
+  ansible.builtin.shell: >
+    docker swarm join-token manager | grep 'docker swarm join' | tr -s ' ' | cut -d' ' -f6 > manager-token
+
+- name: Store "swarm address" remotely
+  ansible.builtin.shell: >
+    docker swarm join-token manager | grep 'docker swarm join' | tr -s ' ' | cut -d' ' -f7 > swarm-address
+
+- name: Copy Swarm files locally
+  ansible.builtin.fetch:
+    src: "/home/{{ main_user }}/{{ item }}"
+    dest: "manager1/{{ item }}"
+    flat: true
+  with_items:
+    - worker-token
+    - manager-token
+    - swarm-address
+
+- name: Delete Swarm files remotely
+  ansible.builtin.file:
+    path: "/home/{{ main_user }}/{{ item }}"
+    state: absent
+  with_items:
+    - worker-token
+    - manager-token
+    - swarm-address

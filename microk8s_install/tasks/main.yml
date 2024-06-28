@@ -1,0 +1,31 @@
+---
+- name: Install MicroK8s with snap
+  community.general.snap:
+    name:
+      - microk8s
+    channel: "1.30/stable"
+    classic: true
+    state: present
+
+- name: Add "main_user" to "microk8s" group
+  ansible.builtin.user:
+    name: "{{ main_user }}"
+    groups: microk8s
+    append: true
+    state: present
+
+- name: Create ".kube" directory
+  ansible.builtin.file:
+    path: "/home/{{ main_user }}/.kube"
+    state: directory
+    mode: "0700"
+
+- name: Add aliases in ".bashrc"
+  ansible.builtin.lineinfile:
+    path: "/home/{{ main_user }}/.bashrc"
+    line: "{{ item }}"
+    state: present
+  with_items:
+    - "alias watch='watch '"
+    - "alias kubectl='microk8s kubectl'"
+    - "alias helm='microk8s helm'"

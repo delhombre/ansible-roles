@@ -1,0 +1,35 @@
+---
+- name: (Debian) Install required packages
+  ansible.builtin.apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - wget
+      - gnupg
+      - lsb-release
+      - openjdk-17-jre
+      - git
+    update_cache: true
+    state: present
+
+- name: (Debian) Add Jenkins repository key
+  ansible.builtin.shell:
+    cmd: >
+      wget -O /usr/share/keyrings/jenkins-keyring.asc 
+      https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+
+- name: (Debian) Add Jenkins repository
+  ansible.builtin.shell:
+    cmd: >
+      echo 
+      "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc]"
+      https://pkg.jenkins.io/debian-stable binary/ | tee
+      /etc/apt/sources.list.d/jenkins.list > /dev/null
+
+- name: (Debian) Install Jenkins
+  ansible.builtin.apt:
+    name:
+      - jenkins
+    update_cache: true
+    state: present

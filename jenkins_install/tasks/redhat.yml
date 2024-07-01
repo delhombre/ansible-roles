@@ -1,0 +1,35 @@
+---
+- name: (RedHat) Install required packages
+  ansible.builtin.yum:
+    name:
+      - curl
+      - wget
+      - java-17-openjdk
+      - git
+      - fontconfig
+    state: present
+    update_cache: true
+
+- name: (RedHat) Add Jenkins repository
+  ansible.builtin.shell:
+    cmd: >
+      wget -O /etc/yum.repos.d/jenkins.repo
+        https://pkg.jenkins.io/redhat-stable/jenkins.repo
+
+- name: (RedHat) Add Jenkins repository key
+  ansible.builtin.shell:
+    cmd: >
+      rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+
+- name: (RedHat) Install Jenkins
+  ansible.builtin.dnf:
+    name:
+      - jenkins
+    state: present
+    update_cache: true
+
+- name: (RedHat) Start Jenkins service
+  ansible.builtin.service:
+    name: jenkins
+    state: started
+    enabled: true

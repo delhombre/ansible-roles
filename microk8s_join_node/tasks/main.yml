@@ -1,0 +1,16 @@
+---
+- name: Add the node to the cluster
+  ansible.builtin.shell:
+    cmd: "{{ lookup('ansible.builtin.file', 'master1/{{ inventory_hostname }}-token') }} --worker"
+
+- name: Open "microk8s" ports on "nodes"
+  ansible.posix.firewalld:
+    port: "{{ item }}"
+    state: enabled
+    immediate: true
+    permanent: true
+  loop:
+    - 25000/tcp
+    - 10250/tcp
+    - 10255/tcp
+    - 19001/tcp

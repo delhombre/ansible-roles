@@ -1,0 +1,27 @@
+---
+- name: (RedHat) Install required packages
+  ansible.builtin.dnf:
+    name:
+      - curl
+      - wget
+      - git
+    update_cache: true
+    state: present
+
+- name: (RedHat) Install Gitlab-Runner repository
+  ansible.builtin.shell:
+    cmd: >
+      curl -L "https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.rpm.sh" | bash
+
+- name: (RedHat) Install Gitlab-Runner
+  ansible.builtin.dnf:
+    name:
+      - gitlab-runner
+    update_cache: true
+    state: present
+
+- name: (RedHat) Start Gitlab-Runner service
+  ansible.builtin.service:
+    name: gitlab-runner
+    state: started
+    enabled: true
